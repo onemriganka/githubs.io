@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Splitter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Splitter</h1>
+    <form id="upload-form">
+        <label for="video-file">Select a video file:</label>
+        <input type="file" id="video-file" name="video-file">
+        <button type="submit">Split Video</button>
+    </form>
+    <div id="progress"></div>
+    <div id="result"></div>
+    <script>
+        const form = document.getElementById('upload-form');
+        const progress = document.getElementById('progress');
+        const result = document.getElementById('result');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/split-video');
+            xhr.upload.addEventListener('progress', (event) => {
+                const percent = (event.loaded / event.total) * 100;
+                progress.innerHTML = `Uploading: ${percent.toFixed(2)}%`;
+            });
+            xhr.addEventListener('load', (event) => {
+                progress.innerHTML = '';
+                result.innerHTML = event.target.responseText;
+            });
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>
